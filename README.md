@@ -1,131 +1,171 @@
-# Moodle Docker with H5P Support
+# Moodle Docker Development Environment
 
-A complete Docker Compose setup for running Moodle LMS with H5P Interactive Content plugin support, MariaDB database, and phpMyAdmin for database management.
+A complete Docker-based development environment for Moodle LMS with PostgreSQL database and pgAdmin interface.
 
-## 🚀 Features
+## 📋 Table of Contents
 
-- **Moodle 4.4** - Latest stable version of the Moodle Learning Management System
-- **H5P Support** - Interactive content creation and delivery
-- **MariaDB 10.11** - Reliable database backend
-- **phpMyAdmin** - Web-based database management interface
-- **Persistent Storage** - Data persists across container restarts
-- **Pre-configured** - Ready to run with sensible defaults
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Detailed Setup](#detailed-setup)
+- [Usage](#usage)
+- [Development](#development)
+- [Configuration](#configuration)
+- [Troubleshooting](#troubleshooting)
+- [Project Structure](#project-structure)
+
+## 🚀 Overview
+
+This Docker setup provides a complete Moodle development environment with:
+- **Moodle 4.4.10** (not the latest version, Haven't test the letest one yet)
+- **PHP 8.3** with Apache
+- **PostgreSQL 17** database
+- **pgAdmin 4** for database management
+- **Local file mounting** for easy development
 
 ## 📋 Prerequisites
 
-- Docker and Docker Compose installed on your system
-- At least 2GB of available RAM
-- Ports 8080 and 8081 available on your host machine
+Before you begin, ensure you have the following installed:
+- [Docker](https://docs.docker.com/get-docker/) (version 20.10 or higher)
+- [Docker Compose](https://docs.docker.com/compose/install/) (version 2.0 or higher)
+- Git (for cloning Moodle files)
 
-## 🛠️ Quick Start
+## ⚡ Quick Start
 
-### 1. Clone and Setup
+1. **Clone this repository:**
+   ```bash
+   git clone <your-repository-url>
+   cd moodle_test
+   ```
+
+2. **Download and setup Moodle files:**
+   ```bash
+   # Download Moodle 4.4.10
+   wget -O moodle-latest.tgz https://download.moodle.org/download.php/direct/stable404/moodle-latest-404.tgz
+   
+   # Extract to moodle directory
+   tar -xzf moodle-latest.tgz -C moodle --strip-components=1
+   
+   # Clean up
+   rm moodle-latest.tgz
+   ```
+
+3. **Start the environment:**
+   ```bash
+   docker-compose up -d --build
+   ```
+
+4. **Access Moodle:**
+   - Open your browser and go to `http://localhost`
+   - Follow the Moodle installation wizard
+
+## 🔧 Detailed Setup
+
+### Step 1: Repository Setup
 
 ```bash
-git clone https://github.com/AshFahim/moodle-docker
-cd moodle-docker
+# Clone the repository
+git clone <your-repository-url>
+cd moodle_test
+
+# Create moodle directory
+mkdir moodle
 ```
 
-### 2. Configure Environment (Optional)
+### Step 2: Download Moodle
 
-Edit `moodle.env` to customize your Moodle installation:
+You have several options to get Moodle files:
 
+#### Option A: Download from Official Site (Recommended)
 ```bash
-# Default values
-MOODLE_SITE_NAME=My Moodle Site
-MOODLE_USERNAME=admin
-MOODLE_PASSWORD=admin123
-MOODLE_EMAIL=admin@example.com
+# Download Moodle 4.4.10
+wget -O moodle-latest.tgz https://download.moodle.org/download.php/direct/stable404/moodle-latest-404.tgz
+
+# Extract to moodle directory
+tar -xzf moodle-latest.tgz -C moodle --strip-components=1
+
+# Clean up
+rm moodle-latest.tgz
 ```
 
-### 3. Start the Services
+#### Option B: Clone from GitHub
+```bash
+# Clone Moodle repository
+git clone https://github.com/moodle/moodle.git moodle
+
+# Switch to stable branch
+cd moodle
+git checkout MOODLE_404_STABLE
+cd ..
+```
+
+#### Option C: Use Existing Moodle Installation
+```bash
+# Copy your existing Moodle files
+cp -r /path/to/your/moodle/* ./moodle/
+```
+
+### Step 3: Start Docker Environment
 
 ```bash
+# Build and start all services
+docker-compose up -d --build
+
+# Check if all containers are running
+docker-compose ps
+```
+
+## 🎯 Usage
+
+### Accessing Services
+
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| **Moodle** | http://localhost | Setup during installation |
+| **pgAdmin** | http://localhost:81 | admin@admin.com / adminpassword |
+
+### Database Configuration
+
+When setting up Moodle, use these database credentials:
+
+- **Database type**: PostgreSQL
+- **Database host**: `postgres`
+- **Database name**: `moodle`
+- **Database user**: `moodle_user`
+- **Database password**: `moodle_password`
+- **Database port**: `5432`
+
+### Managing the Environment
+
+```bash
+# Start services
 docker-compose up -d
+
+# Stop services
+docker-compose down
+
+# Stop and remove volumes (⚠️ This will delete all data)
+docker-compose down --volumes
+
+# View logs
+docker-compose logs -f
+
+# View specific service logs
+docker-compose logs -f moodleapp
 ```
 
-### 4. Wait for Initialization
+## 💻 Development
 
-The first startup may take 3-5 minutes as Moodle performs its initial setup. You can monitor the progress with:
-
-```bash
-docker-compose logs -f moodle
-```
-
-### 5. Access Your Moodle Site
-
-- **Moodle**: http://localhost:8080
-  - Username: `admin`
-  - Password: `admin123`
-
-- **phpMyAdmin**: http://localhost:8081
-  - Username: `moodle`
-  - Password: `moodlepassword`
-
-## 🔧 H5P Plugin Setup
-
-The H5P Interactive Content plugin is included in this setup. To enable it:
-
-1. Log in to Moodle as admin
-2. Navigate to **Site administration** → **Plugins** → **Install plugins**
-3. The H5P plugin should be automatically detected
-4. Install and enable the plugin
-5. Configure H5P settings as needed
-
-## 📁 Project Structure
+### File Structure
 
 ```
-moodle-docker/
-├── docker-compose.yml    # Main Docker Compose configuration
-├── moodle.env           # Environment variables
-├── h5p-plugin/          # H5P plugin directory (auto-created)
-├── setup-h5p.bat        # Windows setup script
-├── setup-h5p.sh         # Linux/Mac setup script
-└── README.md            # This file
+moodle_test/
+├── docker-compose.yml      # Docker services configuration
+├── dockerfile              # Moodle container configuration
+├── entrypoint.sh          # Container startup script
+├── moodle/                # Moodle files (mounted to container)
+│   ├── index.php
+│   ├── config.php
+│   └── ...
+└── README.md              # This file
 ```
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-Key configuration options in `moodle.env`:
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `MOODLE_SITE_NAME` | My Moodle Site | Display name for your Moodle site |
-| `MOODLE_USERNAME` | admin | Admin username |
-| `MOODLE_PASSWORD` | admin123 | Admin password |
-| `MOODLE_EMAIL` | admin@example.com | Admin email address |
-| `PHP_MEMORY_LIMIT` | 512M | PHP memory limit |
-| `PHP_UPLOAD_MAX_FILESIZE` | 100M | Maximum file upload size |
-
-### Ports
-
-- **8080**: Moodle web interface
-- **8081**: phpMyAdmin interface
-
-### Volumes
-
-- `moodle_data`: Moodle application data and files
-- `mariadb_data`: MariaDB database files
-
-## 🐳 Docker Services
-
-### Moodle Service
-- **Image**: `bitnami/moodle:4.4`
-- **Container**: `moodle_app`
-- **Port**: 8080
-- **Features**: Full Moodle LMS with H5P support
-
-### MariaDB Service
-- **Image**: `bitnami/mariadb:10.11`
-- **Container**: `moodle_db`
-- **Database**: `moodle`
-- **Features**: UTF8MB4 character set, persistent storage
-
-### phpMyAdmin Service
-- **Image**: `phpmyadmin/phpmyadmin:latest`
-- **Container**: `moodle_phpmyadmin`
-- **Port**: 8081
-- **Features**: Web-based database management
-
