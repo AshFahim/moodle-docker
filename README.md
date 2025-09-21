@@ -65,8 +65,8 @@ Before you begin, ensure you have the following installed:
 
 ```bash
 # Clone the repository
-git clone <your-repository-url>
-cd moodle_test
+git clone https://github.com/AshFahim/moodle-docker.git
+cd moodle_docker
 
 # Create moodle directory
 mkdir moodle
