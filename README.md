@@ -34,7 +34,7 @@ Before you begin, ensure you have the following installed:
 
 1. **Clone this repository:**
    ```bash
-   git clone <your-repository-url>
+   git clone https://github.com/AshFahim/moodle-docker.git
    cd moodle_test
    ```
 
