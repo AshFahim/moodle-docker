@@ -10,8 +10,10 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Set PHP settings for Moodle: max_input_vars and OPcache
+# Set PHP settings for Moodle: max_input_vars, file upload limits, and OPcache
 RUN echo "max_input_vars=5000" >> /usr/local/etc/php/conf.d/docker-php-moodle.ini && \
+    echo "upload_max_filesize=10M" >> /usr/local/etc/php/conf.d/docker-php-moodle.ini && \
+    echo "post_max_size=10M" >> /usr/local/etc/php/conf.d/docker-php-moodle.ini && \
     echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/docker-php-opcache.ini && \
     echo "opcache.enable_cli=1" >> /usr/local/etc/php/conf.d/docker-php-opcache.ini && \
     echo "opcache.memory_consumption=128" >> /usr/local/etc/php/conf.d/docker-php-opcache.ini && \
